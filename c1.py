@@ -30,7 +30,7 @@ def BackupConfigToxml(cmd):
     #Видаляються старі файли
 #    removeoldxml(localPathForBackup)
     
-#    print(cmd)
+    print(cmd)
     args = shlex.split(cmd)
     #print(args)
     subprocess.run(args, shell=True)

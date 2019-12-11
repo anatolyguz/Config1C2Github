@@ -13,7 +13,11 @@ from  distutils import dir_util
 import c1
 import mygit
 
-test = False
+
+
+
+home = 'C:/Users/Guz'
+#os.chdir(home)
 
 logfile = 'C:/Users/Guz/Config1C2Github/backup_conf.log'
 
@@ -25,7 +29,7 @@ logging.info("Запуск скрипта")
 
 
 
-pathtocnfig = 'config.ini' 
+pathtocnfig = 'C:/Users/Guz/Config1C2Github/config.ini' 
 config = configparser.ConfigParser()
 config.read(pathtocnfig)   
 
@@ -34,23 +38,37 @@ githubUrl = config.get('Settings', 'githubUrl')
 
 bin1c = config.get('Settings', 'bin1c')
 #База 1С
-BASE = config.get('Settings', 'bin1c')
+BASE = config.get('Settings', 'BASE')
 
 #Користувач 1с, під яким буде здійсено вивантаження
 login1с = os.getenv('l1')
 password1с = os.getenv('p1')
 cmd = bin1c + ' DESIGNER  /F ' + BASE + ' /N ' + login1с + ' /P ' + password1с
   
+#test = False
+test = True
 
-tmpdir = '/tmp/LTE'
+tmpdir = 'C:/Users/Guz/AppData/Local/Temp/xml'
+tmpdir1 = 'C:\\Users\\Guz\\AppData\\Local\\Temp\\xml'
 dirfrom1c = '/home/user/xml'
 if test:
-	if os.path.isdir(tmpdir):
-		shutil.rmtree(tmpdir)
-	repo = mygit.clone(tmpdir)
-	# dir_util.copy_tree(dirfrom1c, tmpdir)
-	mygit.add(repo, tmpdir)
-	mygit.commit(repo)
+    print('test')
+    if os.path.isdir(tmpdir):
+        mygit.rmdir(tmpdir1)
+    repo = mygit.clone(tmpdir, githubUrl)
+    time.sleep(20)
+    cmd = cmd + ' /DumpConfigToFiles '+  tmpdir
+    logging.info('Вивартаження конфігурації') 
+    c1.BackupConfigToxml(cmd)
+    time.sleep(20)
+
+#    testfile = 'C:/Users/Guz/Config1C2Github/xml/testfile.txt'
+#    with open(testfile, "w") as file:
+#        file.write('just test....')
+
+#    mygit.add(repo, tmpdir, testfile)
+    mygit.add(repo, tmpdir, '.')
+    mygit.commit(repo)
 
 else:
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -70,10 +88,6 @@ else:
             exit(1)
         try:    
             logging.info('Оновлення локального репозиторію') 
-#            if test:
-#               testfile = os.path.join(localRepoPath, 'testfile.txt.')
-#               with open(testfile, "w") as file:
-#                   file.write('just test....')
             mygit.add(repo, tmpdirname, '.')
         except Exception as e:
             logging.error(e)
