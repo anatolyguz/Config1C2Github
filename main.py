@@ -45,11 +45,13 @@ login1с = os.getenv('l1')
 password1с = os.getenv('p1')
 cmd = bin1c + ' DESIGNER  /F ' + BASE + ' /N ' + login1с + ' /P ' + password1с
   
-#test = False
-test = True
+test = False
+#test = True
 
 tmpdir = 'C:/Users/Guz/AppData/Local/Temp/xml'
 tmpdir1 = 'C:\\Users\\Guz\\AppData\\Local\\Temp\\xml'
+
+
 dirfrom1c = '/home/user/xml'
 if test:
     print('test')
@@ -71,39 +73,54 @@ if test:
     mygit.commit(repo)
 
 else:
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        print(tmpdirname)
-         # Вигрузку бедмо робити у тимчасовий каталог
+    tmpdirname = tempfile.gettempdir()
+    tmpdirname = os.path.join( tmpdirname, 'xml')
+    print(tmpdirname)
+    if os.path.isdir(tmpdirname):
+        mygit.rmdir(tmpdirname)
+    
+    try:
         repo = mygit.clone(tmpdirname, githubUrl)
-        try:
-#            q=1
-            cmd = cmd + ' /DumpConfigToFiles '+  tmpdirname
-            logging.info('Вивартаження конфігурації') 
-            c1.BackupConfigToxml(cmd)
+        print('clone finish')
+    except Exception as e:
+        logging.error(e)
+        logging.error('Завершение работы') 
+        print(str(e))
+        exit(1)
+        
+    try:
+        
+        time.sleep(10)
+        dirnamefor1c = tmpdirname.replace('\\', '/')
+        cmd = cmd + ' /DumpConfigToFiles '+  dirnamefor1c
+        logging.info('Вивартаження конфігурації') 
+        c1.BackupConfigToxml(cmd)
+        print('Backup finish')
 #            time.sleep(50)
-        except Exception as e:
-            logging.error(e)
-            logging.error('Завершение работы') 
-            print(str(e))
-            exit(1)
-        try:    
-            logging.info('Оновлення локального репозиторію') 
-            mygit.add(repo, tmpdirname, '.')
-        except Exception as e:
-            logging.error(e)
-            logging.error('Завершение работы') 
-            print(str(e))
-            exit(1)
-      
-        try:
-            logging.info('Комміт....')
-            mygit.commit(repo)
-        except Exception as e:
-            logging.error(e)
-            logging.error('Завершение работы') 
-            print(str(e))
-            exit(1)
-            
+    except Exception as e:
+        logging.error(e)
+        logging.error('Завершение работы') 
+        print(str(e))
+        exit(1)
+    try:    
+        logging.info('Оновлення локального репозиторію') 
+        mygit.add(repo, tmpdirname, '.')
+    except Exception as e:
+        logging.error(e)
+        logging.error('Завершение работы') 
+        print(str(e))
+        exit(1)
+  
+    try:
+        logging.info('Комміт....')
+        mygit.commit(repo)
+        print('gut')
+    except Exception as e:
+        logging.error(e)
+        logging.error('Завершение работы') 
+        print(str(e))
+        exit(1)
+        
             
 
 logging.info('Завершение работы') 
