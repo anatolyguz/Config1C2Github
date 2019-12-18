@@ -12,14 +12,10 @@ import time
 from  distutils import dir_util
 import c1
 import mygit
+import security
 
 
-
-
-home = 'C:/Users/Guz'
-#os.chdir(home)
-
-logfile = 'C:/Users/Guz/Config1C2Github/backup_conf.log'
+logfile = 'backup_conf.log'
 
 logging.basicConfig(format = u'%(levelname)-8s [%(asctime)s] %(message)s', level = logging.DEBUG, filename = logfile)
 
@@ -29,7 +25,7 @@ logging.info("Запуск скрипта")
 
 
 
-pathtocnfig = 'C:/Users/Guz/Config1C2Github/config.ini' 
+pathtocnfig = 'config.ini' 
 config = configparser.ConfigParser()
 config.read(pathtocnfig)   
 
@@ -41,8 +37,8 @@ bin1c = config.get('Settings', 'bin1c')
 BASE = config.get('Settings', 'BASE')
 
 #Користувач 1с, під яким буде здійсено вивантаження
-login1с = os.getenv('l1')
-password1с = os.getenv('p1')
+login1с = config.get('Settings', 'login1c')
+password1с = security.keyring_get_password(login1с, '1c')
 cmd = bin1c + ' DESIGNER  /F ' + BASE + ' /N ' + login1с + ' /P ' + password1с
   
 test = False
@@ -81,7 +77,7 @@ else:
     
     try:
         repo = mygit.clone(tmpdirname, githubUrl)
-        print('clone finish')
+#        print('clone finish')
     except Exception as e:
         logging.error(e)
         logging.error('Завершение работы') 
@@ -90,12 +86,12 @@ else:
         
     try:
         
-        time.sleep(10)
+#        time.sleep(10)
         dirnamefor1c = tmpdirname.replace('\\', '/')
         cmd = cmd + ' /DumpConfigToFiles '+  dirnamefor1c
         logging.info('Вивартаження конфігурації') 
         c1.BackupConfigToxml(cmd)
-        print('Backup finish')
+#        print('Backup finish')
 #            time.sleep(50)
     except Exception as e:
         logging.error(e)
@@ -114,7 +110,7 @@ else:
     try:
         logging.info('Комміт....')
         mygit.commit(repo)
-        print('gut')
+#        print('gut')
     except Exception as e:
         logging.error(e)
         logging.error('Завершение работы') 
@@ -125,4 +121,4 @@ else:
 
 logging.info('Завершение работы') 
 
-print('Hello world')
+print('Finish OK!')

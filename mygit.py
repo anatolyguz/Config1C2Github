@@ -4,11 +4,25 @@ Created on Mon Dec  9 22:54:20 2019
 
 @author: Guz
 """
-from git import Repo
+
 import os
 from datetime  import datetime 
 import subprocess
 import shlex
+import configparser
+
+pathtocnfig = 'config.ini' 
+config = configparser.ConfigParser()
+config.read(pathtocnfig)   
+bingit = config.get('Settings', 'bingit')
+
+os.environ['GIT_PYTHON_GIT_EXECUTABLE'] = bingit
+
+print('GIT_PYTHON_GIT_EXECUTABLE=' + os.environ['GIT_PYTHON_GIT_EXECUTABLE'] )
+
+
+
+from git import Repo
 
 def clone(localRepoPath, githubUrl):
     repo = Repo.clone_from(githubUrl, localRepoPath)
