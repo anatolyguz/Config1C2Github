@@ -39,7 +39,9 @@ def rmdir(localRepoPath):
 
 
 def add(repo, localRepoPath, filesforUpdate):
-    repo.git.add(localRepoPath)
+    os.chdir(localRepoPath)
+    repo.git.add(A=True)
+#    repo.git.add(localRepoPath)
 #    repo.git.add(os.path.join(localRepoPath, filesforUpdate))
 
 
